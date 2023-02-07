@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Reviz</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"></head>
+<body>
+    <nav class="navbar navbar-expand-lg bg-dark p-3">
+        <div class="container-fluid">
+            <a class="navbar-brand display-3 text-white" href="/">Reviz</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/revize">Revize</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/revidovane_objekty">Revidované objekty</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/objednatele">Objednatelé</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <table class="table table-striped w-100 p-3">
+      <tbody>
+          <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Datum vypracování</th>
+              <th scope="col">Datum ukončení revize</th>
+              <th scope="col">Datum předání revize</th>
+              <th scope="col">Distribuční síť</th>
+              <th scope="col">Počet fází</th>
+              <th scope="col">Počet stringů</th>
+              <th scope="col">Jištění</th>
+              <th scope="col">Přepětová ochrana</th>
+              <th scope="col">Fotka src</th>
+          </tr>
+          <tr th:each="reviz: ${revize}">
+              <th scope="row" th:text="${reviz.id}" />
+              <td th:text="${reviz.datumVypracovani}" />
+              <td th:text="${reviz.datumUkonceniRevize}" />
+              <td th:text="${reviz.datumPredaniRevize}" />
+              <td th:text="${reviz.distribucniSit}" />
+              <td th:text="${reviz.pocetFazi}" />
+              <td th:text="${reviz.pocetStringu}" />
+              <td th:text="${reviz.jisteni}" />
+              <td th:text="${reviz.prepetovaOchrana}" />
+              <td th:text="${reviz.fotkaSrc}" />
+          </tr>
+      </tbody>
+    </table>
+</body>
+</html>

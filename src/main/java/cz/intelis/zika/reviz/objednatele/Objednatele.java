@@ -1,10 +1,17 @@
-package cz.intelis.zika.reviz.entities;
+package cz.intelis.zika.reviz.objednatele;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "objednatele")
 public class Objednatele {
     @Id
@@ -32,52 +39,11 @@ public class Objednatele {
     @Type(type = "org.hibernate.type.TextType")
     private String ulice;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNazev() {
-        return nazev;
-    }
-
-    public void setNazev(String nazev) {
+    public Objednatele(String nazev, String zeme, String mesto, String psc, String ulice) {
         this.nazev = nazev;
-    }
-
-    public String getZeme() {
-        return zeme;
-    }
-
-    public void setZeme(String zeme) {
         this.zeme = zeme;
-    }
-
-    public String getMesto() {
-        return mesto;
-    }
-
-    public void setMesto(String mesto) {
         this.mesto = mesto;
-    }
-
-    public String getPsc() {
-        return psc;
-    }
-
-    public void setPsc(String psc) {
         this.psc = psc;
-    }
-
-    public String getUlice() {
-        return ulice;
-    }
-
-    public void setUlice(String ulice) {
         this.ulice = ulice;
     }
-
 }

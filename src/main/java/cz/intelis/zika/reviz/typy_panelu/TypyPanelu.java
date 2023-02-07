@@ -1,10 +1,16 @@
-package cz.intelis.zika.reviz.entities;
+package cz.intelis.zika.reviz.typy_panelu;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "typy_panelu")
 public class TypyPanelu {
     @Id
@@ -18,29 +24,4 @@ public class TypyPanelu {
 
     @Column(name = "vykon", nullable = false)
     private Short vykon;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTyp() {
-        return typ;
-    }
-
-    public void setTyp(String typ) {
-        this.typ = typ;
-    }
-
-    public Short getVykon() {
-        return vykon;
-    }
-
-    public void setVykon(Short vykon) {
-        this.vykon = vykon;
-    }
-
 }

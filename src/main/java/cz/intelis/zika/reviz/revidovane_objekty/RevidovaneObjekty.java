@@ -1,10 +1,16 @@
-package cz.intelis.zika.reviz.entities;
+package cz.intelis.zika.reviz.revidovane_objekty;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "revidovane_objekty")
 public class RevidovaneObjekty {
     @Id
@@ -31,52 +37,11 @@ public class RevidovaneObjekty {
     @Column(name = "je_bytovy_dum", nullable = false)
     private Boolean jeBytovyDum = false;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getZeme() {
-        return zeme;
-    }
-
-    public void setZeme(String zeme) {
+    public RevidovaneObjekty(String zeme, String mesto, String psc, String ulice, Boolean jeBytovyDum) {
         this.zeme = zeme;
-    }
-
-    public String getMesto() {
-        return mesto;
-    }
-
-    public void setMesto(String mesto) {
         this.mesto = mesto;
-    }
-
-    public String getPsc() {
-        return psc;
-    }
-
-    public void setPsc(String psc) {
         this.psc = psc;
-    }
-
-    public String getUlice() {
-        return ulice;
-    }
-
-    public void setUlice(String ulice) {
         this.ulice = ulice;
-    }
-
-    public Boolean getJeBytovyDum() {
-        return jeBytovyDum;
-    }
-
-    public void setJeBytovyDum(Boolean jeBytovyDum) {
         this.jeBytovyDum = jeBytovyDum;
     }
-
 }
