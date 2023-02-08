@@ -1,5 +1,6 @@
 package cz.intelis.zika.reviz.typy_panelu;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,9 +9,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 @Table(name = "typy_panelu")
 public class TypyPanelu {
     @Id

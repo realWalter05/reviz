@@ -1,5 +1,6 @@
 package cz.intelis.zika.reviz.revidovane_objekty;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,8 +9,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @Table(name = "revidovane_objekty")
 public class RevidovaneObjekty {

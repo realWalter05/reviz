@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/typy_panelu")
+@RequestMapping("/typy_panelu")
 public class TypyPaneluApi {
     private final TypyPaneluService typyPaneluService;
 

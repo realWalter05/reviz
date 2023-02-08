@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/revidovane_objekty")
+@RequestMapping("/revidovane_objekty")
 public class RevidovaneObjektyApi {
     private final RevidovaneObjektyService revidovaneObjektyService;
 

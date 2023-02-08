@@ -2,19 +2,14 @@ package cz.intelis.zika.reviz.revize;
 
 import cz.intelis.zika.reviz.objednatele.Objednatele;
 import cz.intelis.zika.reviz.revidovane_objekty.RevidovaneObjekty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Getter
-@Setter
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
 @Table(name = "revize")
 public class Revize {

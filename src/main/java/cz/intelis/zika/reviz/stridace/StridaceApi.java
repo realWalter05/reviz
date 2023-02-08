@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/stridace")
+@RequestMapping("/stridace")
 @AllArgsConstructor
 public class StridaceApi {
     private final StridaceService stridaceService;

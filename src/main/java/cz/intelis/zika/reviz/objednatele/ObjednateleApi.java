@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/objednatele")
+@RequestMapping("/objednatele")
 public class ObjednateleApi {
     private final ObjednateleService objednateleService;
 
