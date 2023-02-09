@@ -20,8 +20,29 @@ public class RevizeService {
         return revizeRepository.findAll();
     }
 
+    public Revize findById(Long id) {
+        return revizeRepository.findById(id).orElseThrow(RuntimeException::new);
+    }
+
+
     public List<Revize> getRevizeByDatumPredaniRevizeBetween(LocalDate datumPredaniRevizeOd, LocalDate datumPredaniRevizeDo) {
         return revizeRepository.getRevizeByDatumPredaniRevizeBetween(datumPredaniRevizeOd, datumPredaniRevizeDo);
+    }
+
+    public void update(Long id, Revize revize) {
+        Revize oldRevize = revizeRepository.findById(id).get();
+        oldRevize.setDatumVypracovani(revize.getDatumVypracovani());
+        oldRevize.setDatumUkonceniRevize(revize.getDatumUkonceniRevize());
+        oldRevize.setDatumPredaniRevize(revize.getDatumPredaniRevize());
+        oldRevize.setJeNovaInstalace(revize.getJeNovaInstalace());
+        oldRevize.setDistribucniSit(revize.getDistribucniSit());
+        oldRevize.setPocetFazi(revize.getPocetFazi());
+        oldRevize.setPocetStringu(revize.getPocetStringu());
+        oldRevize.setPrepetovaOchrana(revize.getPrepetovaOchrana());
+        oldRevize.setFotkaSrc(revize.getFotkaSrc());
+        oldRevize.setObjednateleIdObjednatele(revize.getObjednateleIdObjednatele());
+        oldRevize.setIdRevidovaneObjektyRevidovaneObjekty(revize.getIdRevidovaneObjektyRevidovaneObjekty());
+        revizeRepository.save(oldRevize);
     }
 
     @Transactional
@@ -33,7 +54,4 @@ public class RevizeService {
         revizeRepository.deleteById(id);
     }
 
-    public Revize findById(Long id) {
-        return revizeRepository.findById(id).orElseThrow(RuntimeException::new);
-    }
 }

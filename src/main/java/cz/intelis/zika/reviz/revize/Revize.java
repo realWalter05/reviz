@@ -1,5 +1,6 @@
 package cz.intelis.zika.reviz.revize;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import cz.intelis.zika.reviz.objednatele.Objednatele;
 import cz.intelis.zika.reviz.revidovane_objekty.RevidovaneObjekty;
 import lombok.*;
@@ -51,10 +52,12 @@ public class Revize {
     @Type(type = "org.hibernate.type.TextType")
     private String fotkaSrc;
 
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "objednatele_id_objednatele")
     private Objednatele objednateleIdObjednatele;
 
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_revidovane_objekty_revidovane_objekty")
     private RevidovaneObjekty idRevidovaneObjektyRevidovaneObjekty;

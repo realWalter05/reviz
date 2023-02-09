@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PanelyRepository
     extends JpaRepository<Panely, Long> {
-    
+
+    public Panely getPanelyByVyrobniCislo(String vyrobniCislo);
 }

@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ObjednateleRepository
     extends JpaRepository<Objednatele, Long> {
-    
+
+    public Objednatele getObjednateleByNazev(String nazev);
 }
