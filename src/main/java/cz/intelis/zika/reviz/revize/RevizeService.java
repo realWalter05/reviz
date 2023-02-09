@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -26,5 +27,13 @@ public class RevizeService {
     @Transactional
     public Revize create(Revize revize) {
         return revizeRepository.save(revize);
+    }
+
+    public void delete(Long id) {
+        revizeRepository.deleteById(id);
+    }
+
+    public Revize findById(Long id) {
+        return revizeRepository.findById(id).orElseThrow(RuntimeException::new);
     }
 }

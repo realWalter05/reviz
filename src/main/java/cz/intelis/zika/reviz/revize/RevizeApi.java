@@ -19,18 +19,30 @@ public class RevizeApi {
         return revizeService.findAll();
     }
 
-    @GetMapping("/between_date")
-    public List<Revize> getRevizeByDatumPredaniRevizeBetween(@RequestParam("datumPredaniRevizeOd") String datumPredaniRevizeOd,
-                                                             @RequestParam("datumPredaniRevizeDo") String datumPredaniRevizeDo) {
-        System.out.println(datumPredaniRevizeOd);
-        System.out.println(datumPredaniRevizeDo);
-        LocalDate datumPredaniRevizeOdDate = LocalDate.parse(datumPredaniRevizeOd);
-        LocalDate datumPredaniRevizeDoDate = LocalDate.parse(datumPredaniRevizeDo);
-        return revizeService.getRevizeByDatumPredaniRevizeBetween(datumPredaniRevizeOdDate, datumPredaniRevizeDoDate);
+    @GetMapping("/id")
+    public Revize findById(@RequestParam("id") String id) {
+        long revizeId = Long.parseLong(id);
+        return revizeService.findById(revizeId);
+    }
+
+    @GetMapping("/delete")
+    public void delete(@RequestParam("id") String id) {
+        long revizeId = Long.parseLong(id);
+        revizeService.delete(revizeId);
     }
 
     @PostMapping
     public Revize create(@RequestBody Revize revize) {
+        System.out.println("Trying to send data");
         return revizeService.create(revize);
+    }
+
+    @GetMapping("/between_date")
+    public List<Revize> getRevizeByDatumPredaniRevizeBetween(@RequestParam("datumPredaniRevizeOd") String datumPredaniRevizeOd,
+                                                             @RequestParam("datumPredaniRevizeDo") String datumPredaniRevizeDo) {
+
+        LocalDate datumPredaniRevizeOdDate = LocalDate.parse(datumPredaniRevizeOd);
+        LocalDate datumPredaniRevizeDoDate = LocalDate.parse(datumPredaniRevizeDo);
+        return revizeService.getRevizeByDatumPredaniRevizeBetween(datumPredaniRevizeOdDate, datumPredaniRevizeDoDate);
     }
 }
