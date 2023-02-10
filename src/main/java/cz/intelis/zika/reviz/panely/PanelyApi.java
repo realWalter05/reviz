@@ -1,5 +1,6 @@
 package cz.intelis.zika.reviz.panely;
 
+import cz.intelis.zika.reviz.revize.Revize;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -22,32 +24,31 @@ public class PanelyApi {
 
     @GetMapping({"/{id}"})
     public ResponseEntity<Panely> findById(@PathVariable Long id) {
-        return new ResponseEntity<>(panelyService.findById(id), HttpStatus.OK);
-    }
-
-    @GetMapping({"/vyrobni_cislo"})
-    public ResponseEntity<Panely> findByNazev(@RequestParam String nazev) {
-        return new ResponseEntity<>(panelyService.findByVyrobniCislo(nazev), HttpStatus.OK);
+        Optional<Panely> revize = panelyService.findById(id);
+        if (revize.isPresent()) {
+            return new ResponseEntity<>(revize.get(), HttpStatus.CREATED);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping({"/{id}"})
-    public ResponseEntity<Panely> delete(@PathVariable("id") Long id) {
+    public void delete(@PathVariable("id") Long id) {
         panelyService.delete(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping
     @Transactional
-    public ResponseEntity<Panely> create(@RequestBody Panely panely) {
-        Panely newPanely = panelyService.create(panely);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("panely", "/api/panely/" + newPanely.getId().toString());
-        return new ResponseEntity<>(newPanely, httpHeaders, HttpStatus.CREATED);
+    public Panely create(@RequestBody Panely panely) {
+        return panelyService.create(panely);
     }
 
-    @PutMapping({"/{id}"})
-    public ResponseEntity<Panely> update(@PathVariable("id") Long id, @RequestBody Panely panely) {
-        panelyService.update(id, panely);
-        return new ResponseEntity<>(panelyService.findById(id), HttpStatus.OK);
+    @PutMapping
+    public Panely update(@RequestBody Panely panely) {
+        return panelyService.update(panely);
+    }
+
+    @GetMapping({"/vyrobni_cislo"})
+    public Panely findByNazev(@RequestParam String nazev) {
+        return panelyService.findByVyrobniCislo(nazev);
     }
 }

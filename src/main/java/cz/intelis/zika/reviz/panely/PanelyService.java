@@ -1,12 +1,10 @@
 package cz.intelis.zika.reviz.panely;
 
-import cz.intelis.zika.reviz.objednatele.Objednatele;
-import cz.intelis.zika.reviz.revize.Revize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.*;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -21,20 +19,17 @@ public class PanelyService {
         return panelyRepository.findAll();
     }
 
-    public Panely findById(Long id) {
-        return panelyRepository.findById(id).orElseThrow(RuntimeException::new);
+    public Optional<Panely> findById(Long id) {
+        return panelyRepository.findById(id);
     }
 
-    public Panely findByVyrobniCislo(String nazev) {
-        return panelyRepository.getPanelyByVyrobniCislo(nazev);
-    }
-
-    public void update(Long id, Panely panely) {
-        Panely oldPanely = panelyRepository.findById(id).get();
-        oldPanely.setIdRevizeRevize(panely.getIdRevizeRevize());
-        oldPanely.setVyrobniCislo(panely.getVyrobniCislo());
-        oldPanely.setIdTypyPaneluTypyPanelu(panely.getIdTypyPaneluTypyPanelu());
-        panelyRepository.save(oldPanely);
+    public Panely update(Panely panely) {
+        Optional<Panely> oldPanely = panelyRepository.findById(panely.getId());
+        Panely instance = oldPanely.get();
+        instance.setIdRevizeRevize(panely.getIdRevizeRevize());
+        instance.setVyrobniCislo(panely.getVyrobniCislo());
+        instance.setIdTypyPaneluTypyPanelu(panely.getIdTypyPaneluTypyPanelu());
+        return panelyRepository.save(instance);
     }
 
     @Transactional
@@ -44,6 +39,10 @@ public class PanelyService {
 
     public void delete(Long id) {
         panelyRepository.deleteById(id);
+    }
+
+    public Panely findByVyrobniCislo(String nazev) {
+        return panelyRepository.getPanelyByVyrobniCislo(nazev);
     }
 
 }

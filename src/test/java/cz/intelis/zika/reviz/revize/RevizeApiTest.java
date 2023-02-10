@@ -13,11 +13,9 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(RevizeApi.class)
 class RevizeApiTest {
@@ -90,5 +88,9 @@ class RevizeApiTest {
                 .andExpect(jsonPath("$[1].jisteni").isString())
                 .andExpect(jsonPath("$[1].prepetovaOchrana").isNumber())
                 .andExpect(jsonPath("$[1].fotkaSrc").isString());
+    }
+
+    @Test
+    void update() {
     }
 }

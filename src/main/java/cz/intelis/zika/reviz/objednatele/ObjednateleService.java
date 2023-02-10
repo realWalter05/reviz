@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -20,22 +21,23 @@ public class ObjednateleService {
         return objednateleRepository.findAll();
     }
 
-    public Objednatele findById(Long id) {
-        return objednateleRepository.findById(id).orElseThrow(RuntimeException::new);
+    public Optional<Objednatele> findById(Long id) {
+        return objednateleRepository.findById(id);
     }
 
-    public Objednatele findByNazev(String nazev) {
-        return objednateleRepository.getObjednateleByNazev(nazev);
+    public List<Objednatele> findByNazev(String nazev) {
+        return objednateleRepository.getObjednatelesByNazev(nazev);
     }
 
-    public void update(Long id, Objednatele objednatele) {
-        Objednatele oldObjednatele = objednateleRepository.findById(id).get();
-        oldObjednatele.setNazev(objednatele.getNazev());
-        oldObjednatele.setZeme(objednatele.getZeme());
-        oldObjednatele.setPsc(objednatele.getZeme());
-        oldObjednatele.setUlice(objednatele.getUlice());
-        oldObjednatele.setMesto(objednatele.getMesto());
-        objednateleRepository.save(oldObjednatele);
+    public Objednatele update(Objednatele objednatele) {
+        Optional<Objednatele> oldObjednatele = objednateleRepository.findById(objednatele.getId());
+        Objednatele instance = oldObjednatele.get();
+        instance.setNazev(objednatele.getNazev());
+        instance.setZeme(objednatele.getZeme());
+        instance.setPsc(objednatele.getZeme());
+        instance.setUlice(objednatele.getUlice());
+        instance.setMesto(objednatele.getMesto());
+        return objednateleRepository.save(instance);
     }
 
     @Transactional

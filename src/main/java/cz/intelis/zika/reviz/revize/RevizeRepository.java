@@ -10,5 +10,5 @@ import java.util.List;
 public interface RevizeRepository
     extends JpaRepository<Revize, Long> {
 
-    public List<Revize> getRevizeByDatumPredaniRevizeBetween(LocalDate datumPredaniRevizeOd, LocalDate datumPredaniRevizeDo);
+    List<Revize> getRevizeByDatumPredaniRevizeBetween(LocalDate datumPredaniRevizeOd, LocalDate datumPredaniRevizeDo);
 }

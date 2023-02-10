@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -23,32 +24,31 @@ public class ObjednateleApi {
 
     @GetMapping({"/{id}"})
     public ResponseEntity<Objednatele> findById(@PathVariable Long id) {
-        return new ResponseEntity<>(objednateleService.findById(id), HttpStatus.OK);
-    }
-
-    @GetMapping({"/nazev"})
-    public ResponseEntity<Objednatele> findByNazev(@RequestParam String nazev) {
-        return new ResponseEntity<>(objednateleService.findByNazev(nazev), HttpStatus.OK);
+        Optional<Objednatele> objednatele = objednateleService.findById(id);
+        if (objednatele.isPresent()) {
+            return new ResponseEntity<>(objednatele.get(), HttpStatus.CREATED);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping({"/{id}"})
-    public ResponseEntity<Objednatele> delete(@PathVariable("id") Long id) {
+    public void delete(@PathVariable("id") Long id) {
         objednateleService.delete(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping
     @Transactional
-    public ResponseEntity<Objednatele> create(@RequestBody Objednatele objednatele) {
-        Objednatele newObjednatele = objednateleService.create(objednatele);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("objednatele", "/api/objednatele/" + newObjednatele.getId().toString());
-        return new ResponseEntity<>(newObjednatele, httpHeaders, HttpStatus.CREATED);
+    public Objednatele create(@RequestBody Objednatele objednatele) {
+        return objednateleService.create(objednatele);
     }
 
     @PutMapping({"/{id}"})
-    public ResponseEntity<Objednatele> update(@PathVariable("id") Long id, @RequestBody Objednatele objednatele) {
-        objednateleService.update(id, objednatele);
-        return new ResponseEntity<>(objednateleService.findById(id), HttpStatus.OK);
+    public Objednatele update(@RequestBody Objednatele objednatele) {
+        return objednateleService.update(objednatele);
+    }
+
+    @GetMapping({"/nazev"})
+    public List<Objednatele> findByNazev(@RequestParam String nazev) {
+        return objednateleService.findByNazev(nazev);
     }
 }

@@ -16,6 +16,7 @@ import javax.persistence.*;
 @Table(name = "panely")
 public class Panely {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_panely", nullable = false)
     private Long id;
 
@@ -30,4 +31,10 @@ public class Panely {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_revize_revize")
     private Revize idRevizeRevize;
+
+    public Panely(String vyrobniCislo, TypyPanelu idTypyPaneluTypyPanelu, Revize idRevizeRevize) {
+        this.vyrobniCislo = vyrobniCislo;
+        this.idTypyPaneluTypyPanelu = idTypyPaneluTypyPanelu;
+        this.idRevizeRevize = idRevizeRevize;
+    }
 }

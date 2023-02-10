@@ -10,6 +10,6 @@ import java.util.List;
 public interface StridaceRepository
     extends JpaRepository<Stridace, Long> {
 
-    public List<Stridace> getStridacesByVyrobce(String vyrobce);
-    public List<Stridace> getStridacesByVyrobniCislo(String vyrobniCislo);
+    List<Stridace> getStridacesByVyrobce(String vyrobce);
+    List<Stridace> getStridacesByVyrobniCislo(String vyrobniCislo);
 }

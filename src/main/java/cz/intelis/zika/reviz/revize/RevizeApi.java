@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @Controller
@@ -25,29 +26,27 @@ public class RevizeApi {
 
     @GetMapping({"/{id}"})
     public ResponseEntity<Revize> findById(@PathVariable Long id) {
-        return new ResponseEntity<>(revizeService.findById(id), HttpStatus.OK);
+        Optional<Revize> revize = revizeService.findById(id);
+        if (revize.isPresent()) {
+            return new ResponseEntity<>(revize.get(), HttpStatus.CREATED);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping({"/{id}"})
-    public ResponseEntity<Revize> delete(@PathVariable("id") Long id) {
+    public void delete(@PathVariable("id") Long id) {
         revizeService.delete(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping
     @Transactional
-    public ResponseEntity<Revize> create(@RequestBody Revize revize) {
-        System.out.println("Trying to send data");
-        Revize newRevize = revizeService.create(revize);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("revize", "/api/revize/" + newRevize.getId().toString());
-        return new ResponseEntity<>(newRevize, httpHeaders, HttpStatus.CREATED);
+    public Revize create(@RequestBody Revize revize) {
+        return revizeService.create(revize);
     }
 
-    @PutMapping({"/{id}"})
-    public ResponseEntity<Revize> update(@PathVariable("id") Long id, @RequestBody Revize revize) {
-        revizeService.update(id, revize);
-        return new ResponseEntity<>(revizeService.findById(id), HttpStatus.OK);
+    @PutMapping
+    public Revize update(@RequestBody Revize revize) {
+        return revizeService.update(revize);
     }
 
     @GetMapping("/between_date")

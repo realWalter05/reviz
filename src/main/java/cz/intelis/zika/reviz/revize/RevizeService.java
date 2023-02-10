@@ -20,29 +20,25 @@ public class RevizeService {
         return revizeRepository.findAll();
     }
 
-    public Revize findById(Long id) {
-        return revizeRepository.findById(id).orElseThrow(RuntimeException::new);
+    public Optional<Revize> findById(Long id) {
+        return revizeRepository.findById(id);
     }
 
-
-    public List<Revize> getRevizeByDatumPredaniRevizeBetween(LocalDate datumPredaniRevizeOd, LocalDate datumPredaniRevizeDo) {
-        return revizeRepository.getRevizeByDatumPredaniRevizeBetween(datumPredaniRevizeOd, datumPredaniRevizeDo);
-    }
-
-    public void update(Long id, Revize revize) {
-        Revize oldRevize = revizeRepository.findById(id).get();
-        oldRevize.setDatumVypracovani(revize.getDatumVypracovani());
-        oldRevize.setDatumUkonceniRevize(revize.getDatumUkonceniRevize());
-        oldRevize.setDatumPredaniRevize(revize.getDatumPredaniRevize());
-        oldRevize.setJeNovaInstalace(revize.getJeNovaInstalace());
-        oldRevize.setDistribucniSit(revize.getDistribucniSit());
-        oldRevize.setPocetFazi(revize.getPocetFazi());
-        oldRevize.setPocetStringu(revize.getPocetStringu());
-        oldRevize.setPrepetovaOchrana(revize.getPrepetovaOchrana());
-        oldRevize.setFotkaSrc(revize.getFotkaSrc());
-        oldRevize.setObjednateleIdObjednatele(revize.getObjednateleIdObjednatele());
-        oldRevize.setIdRevidovaneObjektyRevidovaneObjekty(revize.getIdRevidovaneObjektyRevidovaneObjekty());
-        revizeRepository.save(oldRevize);
+    public Revize update(Revize revize) {
+        Optional<Revize> oldRevize = revizeRepository.findById(revize.getId());
+        Revize instance = oldRevize.get();
+        instance.setDatumVypracovani(revize.getDatumVypracovani());
+        instance.setDatumUkonceniRevize(revize.getDatumUkonceniRevize());
+        instance.setDatumPredaniRevize(revize.getDatumPredaniRevize());
+        instance.setJeNovaInstalace(revize.getJeNovaInstalace());
+        instance.setDistribucniSit(revize.getDistribucniSit());
+        instance.setPocetFazi(revize.getPocetFazi());
+        instance.setPocetStringu(revize.getPocetStringu());
+        instance.setPrepetovaOchrana(revize.getPrepetovaOchrana());
+        instance.setFotkaSrc(revize.getFotkaSrc());
+        instance.setObjednateleIdObjednatele(revize.getObjednateleIdObjednatele());
+        instance.setIdRevidovaneObjektyRevidovaneObjekty(revize.getIdRevidovaneObjektyRevidovaneObjekty());
+        return revizeRepository.save(instance);
     }
 
     @Transactional
@@ -52,6 +48,10 @@ public class RevizeService {
 
     public void delete(Long id) {
         revizeRepository.deleteById(id);
+    }
+
+    public List<Revize> getRevizeByDatumPredaniRevizeBetween(LocalDate datumPredaniRevizeOd, LocalDate datumPredaniRevizeDo) {
+        return revizeRepository.getRevizeByDatumPredaniRevizeBetween(datumPredaniRevizeOd, datumPredaniRevizeDo);
     }
 
 }

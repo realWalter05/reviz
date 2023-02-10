@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -19,22 +20,23 @@ public class RevidovaneObjektyService {
     }
 
 
-    public RevidovaneObjekty findById(Long id) {
-        return revidovaneObjektyRepository.findById(id).orElseThrow(RuntimeException::new);
+    public Optional<RevidovaneObjekty> findById(Long id) {
+        return revidovaneObjektyRepository.findById(id);
     }
 
     public List<RevidovaneObjekty> findByJeBytovyDum(Boolean jeBytovyDum) {
         return revidovaneObjektyRepository.getRevidovaneObjektiesByJeBytovyDum(jeBytovyDum);
     }
 
-    public void update(Long id, RevidovaneObjekty revidovaneObjekty) {
-        RevidovaneObjekty oldRevidovaneObjekty = revidovaneObjektyRepository.findById(id).get();
-        oldRevidovaneObjekty.setZeme(revidovaneObjekty.getZeme());
-        oldRevidovaneObjekty.setPsc(revidovaneObjekty.getZeme());
-        oldRevidovaneObjekty.setUlice(revidovaneObjekty.getUlice());
-        oldRevidovaneObjekty.setMesto(revidovaneObjekty.getMesto());
-        oldRevidovaneObjekty.setJeBytovyDum(revidovaneObjekty.getJeBytovyDum());
-        revidovaneObjektyRepository.save(oldRevidovaneObjekty);
+    public RevidovaneObjekty update(RevidovaneObjekty revidovaneObjekty) {
+        Optional<RevidovaneObjekty> oldRevidovaneObjekty = revidovaneObjektyRepository.findById(revidovaneObjekty.getId());
+        RevidovaneObjekty instance = oldRevidovaneObjekty.get();
+        instance.setZeme(revidovaneObjekty.getZeme());
+        instance.setPsc(revidovaneObjekty.getZeme());
+        instance.setUlice(revidovaneObjekty.getUlice());
+        instance.setMesto(revidovaneObjekty.getMesto());
+        instance.setJeBytovyDum(revidovaneObjekty.getJeBytovyDum());
+        return revidovaneObjektyRepository.save(instance);
     }
 
     @Transactional

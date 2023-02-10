@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -23,33 +24,26 @@ public class RevidovaneObjektyApi {
         return revidovaneObjektyService.findAll();
     }
 
-    public RevidovaneObjekty findById(Long id) {
-        return revidovaneObjektyRepository.findById(id).orElseThrow(RuntimeException::new);
-    }
+    public ResponseEntity<RevidovaneObjekty> findById(Long id) {
+        Optional<RevidovaneObjekty> revidovaneObjekty = revidovaneObjektyService.findById(id);
+        if (revidovaneObjekty.isPresent()) {
+            return new ResponseEntity<>(revidovaneObjekty.get(), HttpStatus.CREATED);
+        }
+        return ResponseEntity.notFound().build();    }
 
     public List<RevidovaneObjekty> findByJeBytovyDum(Boolean jeBytovyDum) {
         return revidovaneObjektyRepository.getRevidovaneObjektiesByJeBytovyDum(jeBytovyDum);
     }
 
-    @PutMapping("/{id}")
-    public void update(@PathVariable  Long id, RevidovaneObjekty revidovaneObjekty) {
-        RevidovaneObjekty oldRevidovaneObjekty = revidovaneObjektyRepository.findById(id).get();
-        oldRevidovaneObjekty.setJeBytovyDum(revidovaneObjekty.getJeBytovyDum());
-        oldRevidovaneObjekty.setZeme(revidovaneObjekty.getZeme());
-        oldRevidovaneObjekty.setPsc(revidovaneObjekty.getPsc());
-        oldRevidovaneObjekty.setMesto(revidovaneObjekty.getMesto());
-        oldRevidovaneObjekty.setUlice(revidovaneObjekty.getUlice());
-        revidovaneObjektyRepository.save(oldRevidovaneObjekty);
+    @PutMapping
+    public RevidovaneObjekty update(@RequestBody RevidovaneObjekty revidovaneObjekty) {
+        return revidovaneObjektyService.update(revidovaneObjekty);
     }
 
     @PostMapping
     @Transactional
-    public ResponseEntity<RevidovaneObjekty> create(@RequestBody RevidovaneObjekty revidovaneObjekty) {
-        System.out.println("Trying to send data");
-        RevidovaneObjekty newRevidovaneObjekty = revidovaneObjektyService.create(revidovaneObjekty);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("revize", "/api/revize/" + newRevidovaneObjekty.getId().toString());
-        return new ResponseEntity<>(newRevidovaneObjekty, httpHeaders, HttpStatus.CREATED);
+    public RevidovaneObjekty create(@RequestBody RevidovaneObjekty revidovaneObjekty) {
+        return revidovaneObjektyService.create(revidovaneObjekty);
     }
 
     public void delete(Long id) {
