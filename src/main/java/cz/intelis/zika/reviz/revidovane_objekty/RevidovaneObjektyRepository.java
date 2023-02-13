@@ -11,5 +11,4 @@ public interface RevidovaneObjektyRepository
     extends JpaRepository<RevidovaneObjekty, Long> {
 
     public List<RevidovaneObjekty> getRevidovaneObjektiesByJeBytovyDum(Boolean jeBytovyDum);
-    
 }

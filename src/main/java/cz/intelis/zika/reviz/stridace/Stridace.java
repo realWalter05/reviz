@@ -34,4 +34,13 @@ public class Stridace {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_revize_revize")
     private Revize idRevizeRevize;
+
+    public Stridace(Long id, Short pocet, String nazev, String vyrobce, String vyrobniCislo, Revize idRevizeRevize) {
+        this.id = id;
+        this.pocet = pocet;
+        this.nazev = nazev;
+        this.vyrobce = vyrobce;
+        this.vyrobniCislo = vyrobniCislo;
+        this.idRevizeRevize = idRevizeRevize;
+    }
 }

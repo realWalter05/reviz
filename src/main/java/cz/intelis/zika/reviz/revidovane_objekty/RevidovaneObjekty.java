@@ -37,7 +37,8 @@ public class RevidovaneObjekty {
     @Column(name = "je_bytovy_dum", nullable = false)
     private Boolean jeBytovyDum = false;
 
-    public RevidovaneObjekty(String zeme, String mesto, String psc, String ulice, Boolean jeBytovyDum) {
+    public RevidovaneObjekty(Long id, String zeme, String mesto, String psc, String ulice, Boolean jeBytovyDum) {
+        this.id = id;
         this.zeme = zeme;
         this.mesto = mesto;
         this.psc = psc;

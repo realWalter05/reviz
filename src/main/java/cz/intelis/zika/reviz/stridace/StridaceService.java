@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -18,8 +19,8 @@ public class StridaceService {
         return stridaceRepository.findAll();
     }
 
-    public Stridace findById(Long id) {
-        return stridaceRepository.findById(id).orElseThrow(RuntimeException::new);
+    public Optional<Stridace> findById(Long id) {
+        return stridaceRepository.findById(id);
     }
 
     public List<Stridace> findByVyrobce(String vyrobce) {
@@ -30,14 +31,15 @@ public class StridaceService {
         return stridaceRepository.getStridacesByVyrobniCislo(vyrobniCislo);
     }
 
-    public void update(Long id, Stridace stridace) {
-        Stridace oldStridace = stridaceRepository.findById(id).get();
-        oldStridace.setNazev(stridace.getNazev());
-        oldStridace.setPocet(stridace.getPocet());
-        oldStridace.setVyrobce(stridace.getVyrobce());
-        oldStridace.setVyrobniCislo(stridace.getVyrobniCislo());
-        oldStridace.setIdRevizeRevize(stridace.getIdRevizeRevize());
-        stridaceRepository.save(oldStridace);
+    public Stridace update(Stridace stridace) {
+        Optional<Stridace> oldStridace = stridaceRepository.findById(stridace.getId());
+        Stridace instance = oldStridace.get();
+        instance.setNazev(stridace.getNazev());
+        instance.setPocet(stridace.getPocet());
+        instance.setVyrobce(stridace.getVyrobce());
+        instance.setVyrobniCislo(stridace.getVyrobniCislo());
+        instance.setIdRevizeRevize(stridace.getIdRevizeRevize());
+        return stridaceRepository.save(instance);
     }
 
     @Transactional

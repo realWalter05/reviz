@@ -9,13 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("/typy_panelu")
 public class TypyPaneluApi {
     private final TypyPaneluService typyPaneluService;
-    private final TypyPaneluRepository typyPaneluRepository;
 
     @GetMapping
     public List<TypyPanelu> findAll() {
@@ -24,30 +24,31 @@ public class TypyPaneluApi {
 
     @GetMapping({"/{id}"})
     public ResponseEntity<TypyPanelu> findById(@PathVariable Long id) {
-        return new ResponseEntity<>(typyPaneluService.findById(id), HttpStatus.OK);    }
+        Optional<TypyPanelu> typyPanelu = typyPaneluService.findById(id);
+        if (typyPanelu.isPresent())
+            return new ResponseEntity<>(typyPanelu.get(), HttpStatus.CREATED);
+        return ResponseEntity.notFound().build();
+    }
 
     @GetMapping({"/typ"})
     public List<TypyPanelu> findByTyp(String typ) {
-        return typyPaneluRepository.getTypyPanelusByTyp(typ);
+        return typyPaneluService.getTypyPanelusByTyp(typ);
     }
 
 
-    @PutMapping({"/{id}"})
-    public ResponseEntity<TypyPanelu> update(@PathVariable("id") Long id, @RequestBody TypyPanelu typyPanelu) {
-        typyPaneluService.update(id, typyPanelu);
-        return new ResponseEntity<>(typyPaneluService.findById(id), HttpStatus.OK);
+    @PutMapping
+    public TypyPanelu update(@RequestBody TypyPanelu typyPanelu) {
+        return typyPaneluService.update(typyPanelu);
     }
 
     @PostMapping
     @Transactional
-    public ResponseEntity<TypyPanelu> create(@RequestBody TypyPanelu typyPanelu) {
-        TypyPanelu newTypyPanelu = typyPaneluService.create(typyPanelu);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("stridace", "/api/stridace/" + newTypyPanelu.getId().toString());
-        return new ResponseEntity<>(newTypyPanelu, httpHeaders, HttpStatus.CREATED);
+    public TypyPanelu create(@RequestBody TypyPanelu typyPanelu) {
+        return typyPaneluService.create(typyPanelu);
     }
 
-    public void delete(Long id) {
-        typyPaneluRepository.deleteById(id);
+    @DeleteMapping({"/{id}"})
+    public void delete(@PathVariable Long id) {
+        typyPaneluService.delete(id);
     }
 }

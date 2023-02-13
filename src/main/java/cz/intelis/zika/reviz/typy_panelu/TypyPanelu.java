@@ -12,6 +12,7 @@ import java.util.List;
 
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "typy_panelu")
 public class TypyPanelu {
     @Id
@@ -25,4 +26,10 @@ public class TypyPanelu {
 
     @Column(name = "vykon", nullable = false)
     private Short vykon;
+
+    public TypyPanelu(Long id, String typ, Short vykon) {
+        this.id = id;
+        this.typ = typ;
+        this.vykon = vykon;
+    }
 }

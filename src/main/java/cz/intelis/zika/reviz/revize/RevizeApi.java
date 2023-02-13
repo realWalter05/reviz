@@ -27,9 +27,8 @@ public class RevizeApi {
     @GetMapping({"/{id}"})
     public ResponseEntity<Revize> findById(@PathVariable Long id) {
         Optional<Revize> revize = revizeService.findById(id);
-        if (revize.isPresent()) {
+        if (revize.isPresent())
             return new ResponseEntity<>(revize.get(), HttpStatus.CREATED);
-        }
         return ResponseEntity.notFound().build();
     }
 

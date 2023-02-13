@@ -1,5 +1,6 @@
 package cz.intelis.zika.reviz.revidovane_objekty;
 
+import cz.intelis.zika.reviz.panely.Panely;
 import cz.intelis.zika.reviz.revize.Revize;
 import cz.intelis.zika.reviz.typy_panelu.TypyPanelu;
 import lombok.AllArgsConstructor;
@@ -17,22 +18,23 @@ import java.util.Optional;
 @RequestMapping("/revidovane_objekty")
 public class RevidovaneObjektyApi {
     private final RevidovaneObjektyService revidovaneObjektyService;
-    private final RevidovaneObjektyRepository revidovaneObjektyRepository;
 
     @GetMapping
     public List<RevidovaneObjekty> findAll() {
         return revidovaneObjektyService.findAll();
     }
 
-    public ResponseEntity<RevidovaneObjekty> findById(Long id) {
+    @GetMapping({"/{id}"})
+    public ResponseEntity<RevidovaneObjekty> findById(@PathVariable Long id) {
         Optional<RevidovaneObjekty> revidovaneObjekty = revidovaneObjektyService.findById(id);
         if (revidovaneObjekty.isPresent()) {
             return new ResponseEntity<>(revidovaneObjekty.get(), HttpStatus.CREATED);
         }
         return ResponseEntity.notFound().build();    }
 
-    public List<RevidovaneObjekty> findByJeBytovyDum(Boolean jeBytovyDum) {
-        return revidovaneObjektyRepository.getRevidovaneObjektiesByJeBytovyDum(jeBytovyDum);
+    @GetMapping({"/bytovy_dum"})
+    public List<RevidovaneObjekty> findByJeBytovyDum(@RequestParam Boolean jeBytovyDum) {
+        return revidovaneObjektyService.getRevidovaneObjektiesByJeBytovyDum(jeBytovyDum);
     }
 
     @PutMapping
@@ -46,7 +48,8 @@ public class RevidovaneObjektyApi {
         return revidovaneObjektyService.create(revidovaneObjekty);
     }
 
-    public void delete(Long id) {
+    @DeleteMapping({"/{id}"})
+    public void delete(@PathVariable("id") Long id) {
         revidovaneObjektyService.delete(id);
     }
 }

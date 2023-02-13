@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -17,19 +18,20 @@ public class TypyPaneluService {
     public List<TypyPanelu> findAll() {
         return typyPaneluRepository.findAll();
     }
-    public TypyPanelu findById(Long id) {
-        return typyPaneluRepository.findById(id).orElseThrow(RuntimeException::new);
+    public Optional<TypyPanelu> findById(Long id) {
+        return typyPaneluRepository.findById(id);
     }
 
-    public List<TypyPanelu> findByNazev(String typ) {
+    public List<TypyPanelu> getTypyPanelusByTyp(String typ) {
         return typyPaneluRepository.getTypyPanelusByTyp(typ);
     }
 
-    public void update(Long id, TypyPanelu typyPanelu) {
-        TypyPanelu oldTypyPanelu = typyPaneluRepository.findById(id).get();
-        oldTypyPanelu.setTyp(typyPanelu.getTyp());
-        oldTypyPanelu.setVykon(typyPanelu.getVykon());
-        typyPaneluRepository.save(oldTypyPanelu);
+    public TypyPanelu update(TypyPanelu typyPanelu) {
+        Optional<TypyPanelu> oldTypyPanelu = typyPaneluRepository.findById(typyPanelu.getId());
+        TypyPanelu instance = oldTypyPanelu.get();
+        instance.setTyp(typyPanelu.getTyp());
+        instance.setVykon(typyPanelu.getVykon());
+        return typyPaneluRepository.save(instance);
     }
 
     @Transactional

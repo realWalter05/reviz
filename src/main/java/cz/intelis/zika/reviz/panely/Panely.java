@@ -32,7 +32,8 @@ public class Panely {
     @JoinColumn(name = "id_revize_revize")
     private Revize idRevizeRevize;
 
-    public Panely(String vyrobniCislo, TypyPanelu idTypyPaneluTypyPanelu, Revize idRevizeRevize) {
+    public Panely(Long id, String vyrobniCislo, TypyPanelu idTypyPaneluTypyPanelu, Revize idRevizeRevize) {
+        this.id = id;
         this.vyrobniCislo = vyrobniCislo;
         this.idTypyPaneluTypyPanelu = idTypyPaneluTypyPanelu;
         this.idRevizeRevize = idRevizeRevize;

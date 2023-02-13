@@ -52,17 +52,18 @@ public class Revize {
     @Type(type = "org.hibernate.type.TextType")
     private String fotkaSrc;
 
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    // @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "objednatele_id_objednatele")
     private Objednatele objednateleIdObjednatele;
 
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    // @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_revidovane_objekty_revidovane_objekty")
     private RevidovaneObjekty idRevidovaneObjektyRevidovaneObjekty;
 
-    public Revize(LocalDate datumVypracovani, LocalDate datumUkonceniRevize, LocalDate datumPredaniRevize, Boolean jeNovaInstalace, String distribucniSit, Short pocetFazi, Short pocetStringu, String jisteni, Short prepetovaOchrana, String fotkaSrc) {
+    public Revize(Long id, LocalDate datumVypracovani, LocalDate datumUkonceniRevize, LocalDate datumPredaniRevize, Boolean jeNovaInstalace, String distribucniSit, Short pocetFazi, Short pocetStringu, String jisteni, Short prepetovaOchrana, String fotkaSrc, Objednatele objednateleIdObjednatele, RevidovaneObjekty idRevidovaneObjektyRevidovaneObjekty) {
+        this.id = id;
         this.datumVypracovani = datumVypracovani;
         this.datumUkonceniRevize = datumUkonceniRevize;
         this.datumPredaniRevize = datumPredaniRevize;
@@ -73,5 +74,7 @@ public class Revize {
         this.jisteni = jisteni;
         this.prepetovaOchrana = prepetovaOchrana;
         this.fotkaSrc = fotkaSrc;
+        this.objednateleIdObjednatele = objednateleIdObjednatele;
+        this.idRevidovaneObjektyRevidovaneObjekty = idRevidovaneObjektyRevidovaneObjekty;
     }
 }

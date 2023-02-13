@@ -1,9 +1,6 @@
 package cz.intelis.zika.reviz.stridace;
 
-import cz.intelis.zika.reviz.stridace.Stridace;
-import cz.intelis.zika.reviz.revize.Revize;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/stridace")
@@ -25,37 +23,35 @@ public class StridaceApi {
 
     @GetMapping({"/{id}"})
     public ResponseEntity<Stridace> findById(@PathVariable Long id) {
-        return new ResponseEntity<>(stridaceService.findById(id), HttpStatus.OK);
+        Optional<Stridace> stridace = stridaceService.findById(id);
+        if (stridace.isPresent())
+            return new ResponseEntity<>(stridace.get(), HttpStatus.CREATED);
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping({"/vyrobce"})
-    public ResponseEntity<List<Stridace>> findByVyrobce(@RequestParam String vyrobce) {
-        return new ResponseEntity<>(stridaceService.findByVyrobce(vyrobce), HttpStatus.OK);
+    public List<Stridace> findByVyrobce(@RequestParam String vyrobce) {
+        return stridaceService.findByVyrobce(vyrobce);
     }
 
     @GetMapping({"/vyrobni_cislo"})
-    public ResponseEntity<List<Stridace>> findByVyrobniCislo(@RequestParam String vyrobniCislo) {
-        return new ResponseEntity<>(stridaceService.findByVyrobniCislo(vyrobniCislo), HttpStatus.OK);
+    public List<Stridace> findByVyrobniCislo(@RequestParam String vyrobniCislo) {
+        return stridaceService.findByVyrobniCislo(vyrobniCislo);
     }
 
     @DeleteMapping({"/{id}"})
-    public ResponseEntity<Stridace> delete(@PathVariable("id") Long id) {
+    public void delete(@PathVariable("id") Long id) {
         stridaceService.delete(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping
     @Transactional
-    public ResponseEntity<Stridace> create(@RequestBody Stridace stridace) {
-        Stridace newStridace = stridaceService.create(stridace);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("stridace", "/api/stridace/" + newStridace.getId().toString());
-        return new ResponseEntity<>(newStridace, httpHeaders, HttpStatus.CREATED);
+    public Stridace create(@RequestBody Stridace stridace) {
+        return stridaceService.create(stridace);
     }
 
-    @PutMapping({"/{id}"})
-    public ResponseEntity<Stridace> update(@PathVariable("id") Long id, @RequestBody Stridace stridace) {
-        stridaceService.update(id, stridace);
-        return new ResponseEntity<>(stridaceService.findById(id), HttpStatus.OK);
+    @PutMapping
+    public Stridace update(@RequestBody Stridace stridace) {
+        return stridaceService.update(stridace);
     }
 }

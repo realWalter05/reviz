@@ -24,7 +24,7 @@ public class RevidovaneObjektyService {
         return revidovaneObjektyRepository.findById(id);
     }
 
-    public List<RevidovaneObjekty> findByJeBytovyDum(Boolean jeBytovyDum) {
+    public List<RevidovaneObjekty> getRevidovaneObjektiesByJeBytovyDum(Boolean jeBytovyDum) {
         return revidovaneObjektyRepository.getRevidovaneObjektiesByJeBytovyDum(jeBytovyDum);
     }
 

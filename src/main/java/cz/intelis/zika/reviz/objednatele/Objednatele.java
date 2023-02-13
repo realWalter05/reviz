@@ -35,7 +35,8 @@ public class Objednatele {
     @Type(type = "org.hibernate.type.TextType")
     private String ulice;
 
-    public Objednatele(String nazev, String zeme, String mesto, String psc, String ulice) {
+    public Objednatele(Long id, String nazev, String zeme, String mesto, String psc, String ulice) {
+        this.id = id;
         this.nazev = nazev;
         this.zeme = zeme;
         this.mesto = mesto;
