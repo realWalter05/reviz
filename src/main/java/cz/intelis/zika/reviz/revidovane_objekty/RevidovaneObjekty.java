@@ -1,9 +1,6 @@
 package cz.intelis.zika.reviz.revidovane_objekty;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -11,6 +8,7 @@ import javax.persistence.*;
 @Entity
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "revidovane_objekty")
 public class RevidovaneObjekty {
     @Id
@@ -36,13 +34,4 @@ public class RevidovaneObjekty {
 
     @Column(name = "je_bytovy_dum", nullable = false)
     private Boolean jeBytovyDum = false;
-
-    public RevidovaneObjekty(Long id, String zeme, String mesto, String psc, String ulice, Boolean jeBytovyDum) {
-        this.id = id;
-        this.zeme = zeme;
-        this.mesto = mesto;
-        this.psc = psc;
-        this.ulice = ulice;
-        this.jeBytovyDum = jeBytovyDum;
-    }
 }

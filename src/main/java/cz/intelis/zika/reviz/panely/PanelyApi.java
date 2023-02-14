@@ -1,5 +1,6 @@
 package cz.intelis.zika.reviz.panely;
 
+import cz.intelis.zika.reviz.revidovane_objekty.RevidovaneObjekty;
 import cz.intelis.zika.reviz.revize.Revize;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -38,10 +39,9 @@ public class PanelyApi {
 
     @PostMapping
     @Transactional
-    public Panely create(@RequestBody Panely panely) {
-        return panelyService.create(panely);
+    public ResponseEntity<Panely> create(@RequestBody Panely panely) {
+        return new ResponseEntity<>(panelyService.create(panely), HttpStatus.CREATED);
     }
-
     @PutMapping
     public Panely update(@RequestBody Panely panely) {
         return panelyService.update(panely);

@@ -1,5 +1,6 @@
 package cz.intelis.zika.reviz.stridace;
 
+import cz.intelis.zika.reviz.revidovane_objekty.RevidovaneObjekty;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -46,10 +47,9 @@ public class StridaceApi {
 
     @PostMapping
     @Transactional
-    public Stridace create(@RequestBody Stridace stridace) {
-        return stridaceService.create(stridace);
+    public ResponseEntity<Stridace> create(@RequestBody Stridace stridace) {
+        return new ResponseEntity<>(stridaceService.create(stridace), HttpStatus.CREATED);
     }
-
     @PutMapping
     public Stridace update(@RequestBody Stridace stridace) {
         return stridaceService.update(stridace);

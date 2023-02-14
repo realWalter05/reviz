@@ -1,5 +1,6 @@
 package cz.intelis.zika.reviz.typy_panelu;
 
+import cz.intelis.zika.reviz.revidovane_objekty.RevidovaneObjekty;
 import cz.intelis.zika.reviz.revize.Revize;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -43,8 +44,8 @@ public class TypyPaneluApi {
 
     @PostMapping
     @Transactional
-    public TypyPanelu create(@RequestBody TypyPanelu typyPanelu) {
-        return typyPaneluService.create(typyPanelu);
+    public ResponseEntity<TypyPanelu> create(@RequestBody TypyPanelu typyPanelu) {
+        return new ResponseEntity<>(typyPaneluService.create(typyPanelu), HttpStatus.CREATED);
     }
 
     @DeleteMapping({"/{id}"})

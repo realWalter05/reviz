@@ -8,6 +8,7 @@ import javax.persistence.*;
 @Entity
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "objednatele")
 public class Objednatele {
     @Id
@@ -34,13 +35,4 @@ public class Objednatele {
     @Column(name = "ulice", nullable = false)
     @Type(type = "org.hibernate.type.TextType")
     private String ulice;
-
-    public Objednatele(Long id, String nazev, String zeme, String mesto, String psc, String ulice) {
-        this.id = id;
-        this.nazev = nazev;
-        this.zeme = zeme;
-        this.mesto = mesto;
-        this.psc = psc;
-        this.ulice = ulice;
-    }
 }

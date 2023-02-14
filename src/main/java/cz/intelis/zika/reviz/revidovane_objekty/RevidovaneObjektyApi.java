@@ -44,8 +44,8 @@ public class RevidovaneObjektyApi {
 
     @PostMapping
     @Transactional
-    public RevidovaneObjekty create(@RequestBody RevidovaneObjekty revidovaneObjekty) {
-        return revidovaneObjektyService.create(revidovaneObjekty);
+    public ResponseEntity<RevidovaneObjekty> create(@RequestBody RevidovaneObjekty revidovaneObjekty) {
+        return new ResponseEntity<>(revidovaneObjektyService.create(revidovaneObjekty), HttpStatus.CREATED);
     }
 
     @DeleteMapping({"/{id}"})

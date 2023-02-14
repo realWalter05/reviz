@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cz.intelis.zika.reviz.objednatele.Objednatele;
+import cz.intelis.zika.reviz.revidovane_objekty.RevidovaneObjekty;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -23,6 +26,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+
 
 @WebMvcTest(RevizeApi.class)
 class RevizeApiTest {
@@ -106,13 +116,72 @@ class RevizeApiTest {
     }
 
     @Test
-    void findById() throws Exception {
+    void findAllWithAnotherClass() throws Exception {
+        Revize revize1 = new Revize (
+                (long) 2,
+                LocalDate.of(2005, Month.DECEMBER, 29),
+                LocalDate.of(2005, Month.DECEMBER, 29),
+                LocalDate.of(2005, Month.DECEMBER, 29),
+                true,
+                "wef",
+                (short)6,
+                (short)8,
+                "asd",
+                (short) 69,
+                "das",
+                new Objednatele(),
+                new RevidovaneObjekty()
+        );
+
+        List<Revize> revize = new ArrayList<Revize>();
+        revize.add(revizeExample0);
+        revize.add(revize1);
+
+        Mockito.when(revizeService.findAll())
+                .thenReturn(revize);
+
+        mockMvc.perform(get("/revize")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].id").value(revize.get(0).getId()))
+                .andExpect(jsonPath("$[0].datumVypracovani").value(revize.get(0).getDatumVypracovani().toString()))
+                .andExpect(jsonPath("$[0].datumUkonceniRevize").value(revize.get(0).getDatumUkonceniRevize().toString()))
+                .andExpect(jsonPath("$[0].datumPredaniRevize").value(revize.get(0).getDatumPredaniRevize().toString()))
+                .andExpect(jsonPath("$[0].jeNovaInstalace").value(revize.get(0).getJeNovaInstalace()))
+                .andExpect(jsonPath("$[0].distribucniSit").value(revize.get(0).getDistribucniSit()))
+                .andExpect(jsonPath("$[0].pocetFazi").value(revize.get(0).getPocetFazi().toString()))
+                .andExpect(jsonPath("$[0].pocetStringu").value(revize.get(0).getPocetStringu().toString()))
+                .andExpect(jsonPath("$[0].jisteni").value(revize.get(0).getJisteni()))
+                .andExpect(jsonPath("$[0].prepetovaOchrana").value(revize.get(0).getPrepetovaOchrana().toString()))
+                .andExpect(jsonPath("$[0].fotkaSrc").value(revize.get(0).getFotkaSrc()))
+                .andExpect(jsonPath("$[0].objednateleIdObjednatele").value(revize.get(0).getObjednateleIdObjednatele()))
+                .andExpect(jsonPath("$[0].idRevidovaneObjektyRevidovaneObjekty").value(revize.get(0).getIdRevidovaneObjektyRevidovaneObjekty()))
+                .andExpect(jsonPath("$[1].id").value(revize.get(1).getId()))
+                .andExpect(jsonPath("$[1].datumVypracovani").value(revize.get(1).getDatumVypracovani().toString()))
+                .andExpect(jsonPath("$[1].datumUkonceniRevize").value(revize.get(1).getDatumUkonceniRevize().toString()))
+                .andExpect(jsonPath("$[1].datumPredaniRevize").value(revize.get(1).getDatumPredaniRevize().toString()))
+                .andExpect(jsonPath("$[1].jeNovaInstalace").value(revize.get(1).getJeNovaInstalace()))
+                .andExpect(jsonPath("$[1].distribucniSit").value(revize.get(1).getDistribucniSit()))
+                .andExpect(jsonPath("$[1].pocetFazi").value(revize.get(1).getPocetFazi().toString()))
+                .andExpect(jsonPath("$[1].pocetStringu").value(revize.get(1).getPocetStringu().toString()))
+                .andExpect(jsonPath("$[1].jisteni").value(revize.get(1).getJisteni()))
+                .andExpect(jsonPath("$[1].prepetovaOchrana").value(revize.get(1).getPrepetovaOchrana().toString()))
+                .andExpect(jsonPath("$[1].fotkaSrc").value(revize.get(1).getFotkaSrc()))
+                .andExpect(jsonPath("$[1].objednateleIdObjednatele").value(revize.get(1).getObjednateleIdObjednatele()))
+                .andExpect(jsonPath("$[1].idRevidovaneObjektyRevidovaneObjekty").value(revize.get(1).getIdRevidovaneObjektyRevidovaneObjekty()));
+    }
+
+    @Test
+    void findByIdPositive() throws Exception {
         Mockito.when(revizeService.findById(revizeExample0.getId())).thenReturn(Optional.of(revizeExample0));
 
         mockMvc.perform(get("/revize/"+revizeExample0.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().is(201))
+                .andExpect(status().is(200))
                 .andExpect(jsonPath("$").isNotEmpty())
                 .andExpect(jsonPath("$.id").value(revizeExample0.getId()))
                 .andExpect(jsonPath("$.datumVypracovani").value(revizeExample0.getDatumVypracovani().toString()))
@@ -128,8 +197,20 @@ class RevizeApiTest {
     }
 
     @Test
-    void delete_test() {
-        // TODO
+    void findByIdNegative() throws Exception {
+        Mockito.when(revizeService.findById(revizeExample0.getId())).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/revize/"+revizeExample0.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void deletePositive() throws Exception {
+        willDoNothing().given(revizeService).delete(revizeExample0.getId());
+        ResultActions response = mockMvc.perform(delete("/revize/{id}", revizeExample0.getId()));
+        response.andExpect(status().isOk());
     }
 
     @Test
@@ -145,7 +226,7 @@ class RevizeApiTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(revizeExample0))
                 )
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$").isNotEmpty())
                 .andExpect(jsonPath("$.id").value(revizeExample0.getId()))
                 .andExpect(jsonPath("$.datumVypracovani").value(revizeExample0.getDatumVypracovani().toString()))
@@ -161,7 +242,7 @@ class RevizeApiTest {
     }
 
     @Test
-    void update() throws Exception {
+    void updatePositive() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.findAndRegisterModules();
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -261,5 +342,24 @@ class RevizeApiTest {
                 .andExpect(jsonPath("$[1].jisteni").value(revize.get(1).getJisteni()))
                 .andExpect(jsonPath("$[1].prepetovaOchrana").value(revize.get(1).getPrepetovaOchrana().toString()))
                 .andExpect(jsonPath("$[1].fotkaSrc").value(revize.get(1).getFotkaSrc()));
+    }
+
+    @Test
+    void getRevizeByDatumPredaniRevizeBetweenNegative() throws Exception {
+        List<Revize> revize = new ArrayList<Revize>();
+
+        LocalDate datumPredaniRevizeOd = LocalDate.of(2005, Month.DECEMBER, 29);
+        LocalDate datumPredaniRevizeDo = LocalDate.of(2010, Month.DECEMBER, 29);
+
+        Mockito.when(revizeService.getRevizeByDatumPredaniRevizeBetween(datumPredaniRevizeOd, datumPredaniRevizeDo))
+                .thenReturn(revize);
+
+        mockMvc.perform(get("/revize/between_date")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("datumPredaniRevizeOd", datumPredaniRevizeOd.toString())
+                        .param("datumPredaniRevizeDo", datumPredaniRevizeDo.toString())
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
     }
 }

@@ -1,9 +1,6 @@
 package cz.intelis.zika.reviz.typy_panelu;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Type;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -13,6 +10,7 @@ import java.util.List;
 @Entity
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "typy_panelu")
 public class TypyPanelu {
     @Id
@@ -26,10 +24,4 @@ public class TypyPanelu {
 
     @Column(name = "vykon", nullable = false)
     private Short vykon;
-
-    public TypyPanelu(Long id, String typ, Short vykon) {
-        this.id = id;
-        this.typ = typ;
-        this.vykon = vykon;
-    }
 }

@@ -1,7 +1,7 @@
 package cz.intelis.zika.reviz.revize;
 
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpHeaders;
+import org.odftoolkit.odfdom.doc.OdfTextDocument;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -28,7 +28,17 @@ public class RevizeApi {
     public ResponseEntity<Revize> findById(@PathVariable Long id) {
         Optional<Revize> revize = revizeService.findById(id);
         if (revize.isPresent())
-            return new ResponseEntity<>(revize.get(), HttpStatus.CREATED);
+            return new ResponseEntity<>(revize.get(), HttpStatus.OK);
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping({"create_report/{id}"})
+    public ResponseEntity<Revize> createReport(@PathVariable Long id) throws Exception {
+        Optional<Revize> revize = revizeService.findById(id);
+        if (revize.isPresent()) {
+            revizeService.createReport(revize.get());
+            return new ResponseEntity<>(revize.get(), HttpStatus.OK);
+        }
         return ResponseEntity.notFound().build();
     }
 
@@ -39,8 +49,8 @@ public class RevizeApi {
 
     @PostMapping
     @Transactional
-    public Revize create(@RequestBody Revize revize) {
-        return revizeService.create(revize);
+    public ResponseEntity<Revize> create(@RequestBody Revize revize) {
+        return new ResponseEntity<>(revizeService.create(revize), HttpStatus.CREATED);
     }
 
     @PutMapping

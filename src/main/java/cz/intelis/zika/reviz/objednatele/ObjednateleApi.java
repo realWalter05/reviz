@@ -1,5 +1,6 @@
 package cz.intelis.zika.reviz.objednatele;
 
+import cz.intelis.zika.reviz.revidovane_objekty.RevidovaneObjekty;
 import cz.intelis.zika.reviz.revize.Revize;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -38,10 +39,9 @@ public class ObjednateleApi {
 
     @PostMapping
     @Transactional
-    public Objednatele create(@RequestBody Objednatele objednatele) {
-        return objednateleService.create(objednatele);
+    public ResponseEntity<Objednatele> create(@RequestBody Objednatele objednatele) {
+        return new ResponseEntity<>(objednateleService.create(objednatele), HttpStatus.CREATED);
     }
-
     @PutMapping({"/{id}"})
     public Objednatele update(@RequestBody Objednatele objednatele) {
         return objednateleService.update(objednatele);
