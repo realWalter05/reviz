@@ -1,8 +1,11 @@
 package cz.intelis.zika.reviz.revize;
 
+import cz.intelis.zika.reviz.panely.PanelyService;
+import cz.intelis.zika.reviz.stridace.StridaceService;
 import lombok.AllArgsConstructor;
-import org.odftoolkit.odfdom.doc.OdfTextDocument;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +21,8 @@ import java.util.Optional;
 @RequestMapping("/revize")
 public class RevizeApi {
     private final RevizeService revizeService;
+    private final PanelyService panelyService;
+    private final StridaceService stridaceService;
 
     @GetMapping
     public List<Revize> findAll() {
@@ -32,14 +37,20 @@ public class RevizeApi {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping({"create_report/{id}"})
-    public ResponseEntity<Revize> createReport(@PathVariable Long id) throws Exception {
+    @GetMapping({"create_report"})
+    public ResponseEntity<byte[]> createReport(@RequestParam Long id) throws Exception {
         Optional<Revize> revize = revizeService.findById(id);
-        if (revize.isPresent()) {
-            revizeService.createReport(revize.get());
-            return new ResponseEntity<>(revize.get(), HttpStatus.OK);
-        }
-        return ResponseEntity.notFound().build();
+        Revize revizeInstance = revize.get();
+        revizeService.createReport(revizeInstance, panelyService.getPaneliesByIdRevizeRevize(revizeInstance), stridaceService.getStridacesByIdRevizeRevize(revizeInstance));
+
+        byte[] contents = this.getClass().getClassLoader().getResourceAsStream("result/result.odt").readAllBytes();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_XML);
+        String filename = "output.odt";
+        headers.setContentDispositionFormData(filename, filename);
+        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+        ResponseEntity<byte[]> response = new ResponseEntity<>(contents, headers, HttpStatus.OK);
+        return response;
     }
 
     @DeleteMapping({"/{id}"})

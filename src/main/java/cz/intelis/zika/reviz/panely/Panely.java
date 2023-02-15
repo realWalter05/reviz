@@ -1,5 +1,6 @@
 package cz.intelis.zika.reviz.panely;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import cz.intelis.zika.reviz.revize.Revize;
 import cz.intelis.zika.reviz.typy_panelu.TypyPanelu;
 import lombok.*;
@@ -22,11 +23,11 @@ public class Panely {
     @Type(type = "org.hibernate.type.TextType")
     private String vyrobniCislo;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_typy_panelu_typy_panelu")
     private TypyPanelu idTypyPaneluTypyPanelu;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_revize_revize")
     private Revize idRevizeRevize;
 }

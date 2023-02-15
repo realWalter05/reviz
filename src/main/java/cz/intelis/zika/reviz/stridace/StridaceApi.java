@@ -1,6 +1,7 @@
 package cz.intelis.zika.reviz.stridace;
 
 import cz.intelis.zika.reviz.revidovane_objekty.RevidovaneObjekty;
+import cz.intelis.zika.reviz.revize.Revize;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,11 @@ public class StridaceApi {
     @GetMapping({"/vyrobni_cislo"})
     public List<Stridace> findByVyrobniCislo(@RequestParam String vyrobniCislo) {
         return stridaceService.findByVyrobniCislo(vyrobniCislo);
+    }
+
+    @GetMapping({"/stridace_by_revize"})
+    public List<Stridace> findByVyrobniCislo(@RequestBody Revize revize) {
+        return stridaceService.getStridacesByIdRevizeRevize(revize);
     }
 
     @DeleteMapping({"/{id}"})

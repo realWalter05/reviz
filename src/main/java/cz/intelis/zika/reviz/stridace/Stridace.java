@@ -1,5 +1,6 @@
 package cz.intelis.zika.reviz.stridace;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import cz.intelis.zika.reviz.revize.Revize;
 import lombok.*;
 import org.hibernate.annotations.Type;
@@ -32,7 +33,7 @@ public class Stridace {
     @Type(type = "org.hibernate.type.TextType")
     private String vyrobniCislo;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_revize_revize")
     private Revize idRevizeRevize;
 }

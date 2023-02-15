@@ -51,4 +51,9 @@ public class PanelyApi {
     public Panely findByNazev(@RequestParam String nazev) {
         return panelyService.findByVyrobniCislo(nazev);
     }
+
+    @GetMapping({"/panely_by_revize"})
+    public List<Panely> getPaneliesByIdRevizeRevize(@RequestBody Revize revize) {
+        return panelyService.getPaneliesByIdRevizeRevize(revize);
+    }
 }

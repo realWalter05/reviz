@@ -1,5 +1,6 @@
 package cz.intelis.zika.reviz.stridace;
 
+import cz.intelis.zika.reviz.revize.Revize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,10 @@ public class StridaceService {
 
     public List<Stridace> findByVyrobniCislo(String vyrobniCislo) {
         return stridaceRepository.getStridacesByVyrobniCislo(vyrobniCislo);
+    }
+
+    public List<Stridace> getStridacesByIdRevizeRevize(Revize revize) {
+        return stridaceRepository.getStridacesByIdRevizeRevize(revize);
     }
 
     public Stridace update(Stridace stridace) {

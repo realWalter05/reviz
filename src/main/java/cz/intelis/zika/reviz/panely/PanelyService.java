@@ -1,5 +1,6 @@
 package cz.intelis.zika.reviz.panely;
 
+import cz.intelis.zika.reviz.revize.Revize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +44,10 @@ public class PanelyService {
 
     public Panely findByVyrobniCislo(String nazev) {
         return panelyRepository.getPanelyByVyrobniCislo(nazev);
+    }
+
+    public List<Panely> getPaneliesByIdRevizeRevize(Revize revize) {
+        return panelyRepository.getPaneliesByIdRevizeRevize(revize);
     }
 
 }

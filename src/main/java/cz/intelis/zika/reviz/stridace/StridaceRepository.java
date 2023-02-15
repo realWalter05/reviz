@@ -12,4 +12,6 @@ public interface StridaceRepository
 
     List<Stridace> getStridacesByVyrobce(String vyrobce);
     List<Stridace> getStridacesByVyrobniCislo(String vyrobniCislo);
+
+    List<Stridace> getStridacesByIdRevizeRevize(Revize revize);
 }

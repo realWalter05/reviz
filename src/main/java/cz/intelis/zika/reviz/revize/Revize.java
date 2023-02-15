@@ -53,13 +53,12 @@ public class Revize {
     @Type(type = "org.hibernate.type.TextType")
     private String fotkaSrc;
 
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @ManyToOne(fetch = FetchType.LAZY)
+    // Changed fetch type to eager from lazy to get rid of the magical annotation
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "objednatele_id_objednatele")
     private Objednatele objednateleIdObjednatele;
 
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_revidovane_objekty_revidovane_objekty")
     private RevidovaneObjekty idRevidovaneObjektyRevidovaneObjekty;
 }
