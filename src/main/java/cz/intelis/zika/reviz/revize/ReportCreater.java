@@ -7,9 +7,14 @@ import cz.intelis.zika.reviz.stridace.Stridace;
 import cz.intelis.zika.reviz.typy_panelu.TypyPanelu;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.pkg.OdfElement;
+import org.odftoolkit.odfdom.pkg.OdfPackage;
+import org.springframework.beans.factory.annotation.Value;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -20,12 +25,13 @@ import java.util.Map;
 public class ReportCreater {
 
     public OdfDocument doc;
-    private Revize revize;
-    private List<Panely> panely;
-    private List<Stridace> stridace;
-    private Objednatele objednatele;
-    private OdfElement root;
-    private RevidovaneObjekty revidovaneObjekty;
+    private final String resultDirectory;
+    private final Revize revize;
+    private final List<Panely> panely;
+    private final List<Stridace> stridace;
+    private final Objednatele objednatele;
+    private final OdfElement root;
+    private final RevidovaneObjekty revidovaneObjekty;
 
     private Node datumVypracovaniRevize;
     private Node datumPredaniRevize;
@@ -40,15 +46,17 @@ public class ReportCreater {
     private Node popisRevidovanehoObjektu1;
     private Node popisRevidovanehoObjektu2;
     private Node popisRevidovanehoObjektu3;
-    private Node pocetVykonPanelu;
-    private Node typPanelu;
     private Node kWCelkem1;
     private Node stridac;
     private Node stridacVyrobniCislo;
     private Node nextStridacePlaceholder;
+    private Node fvePanelyPlaceholder;
+    private Node prepetovaOchrana;
+    private Node typJisteni;
 
-    public ReportCreater(OdfDocument doc, Revize revize, List<Panely> panely,  List<Stridace> stridace) throws Exception {
+    public ReportCreater(OdfDocument doc, String resultDirectory, Revize revize, List<Panely> panely, List<Stridace> stridace) throws Exception {
         this.doc = doc;
+        this.resultDirectory = resultDirectory;
         this.revize = revize;
         this.root = this.doc.getContentRoot();
         this.panely = panely;
@@ -88,12 +96,13 @@ public class ReportCreater {
                 case "popisRevidovanehoObjektu1" -> popisRevidovanehoObjektu1 = texts.item(i);
                 case "popisRevidovanehoObjektu2" -> popisRevidovanehoObjektu2 = texts.item(i);
                 case "popisRevidovanehoObjektu3" -> popisRevidovanehoObjektu3 = texts.item(i);
-                case "pocetVykonPanelu" -> pocetVykonPanelu = texts.item(i);
-                case "typPanelu" -> typPanelu = texts.item(i);
                 case "kWCelkem1" -> kWCelkem1 = texts.item(i);
                 case "stridac" -> stridac = texts.item(i);
                 case "stridacVyrobniCislo" -> stridacVyrobniCislo = texts.item(i);
                 case "nextStridacePlaceholder" -> nextStridacePlaceholder = texts.item(i);
+                case "fvePanelyPlaceholder" -> fvePanelyPlaceholder = texts.item(i);
+                case "prepetovaOchrana" -> prepetovaOchrana = texts.item(i);
+                case "typJisteni" -> typJisteni = texts.item(i);
             }
         }
     }
@@ -163,6 +172,14 @@ public class ReportCreater {
                 ", které je v příloze revizní zprávy. Další přílohou revizní zprávy jsou datesheety použitých FVE panelů a střídače.";
     }
 
+    private String getPrepetovaOchrana() {
+        return "PŘEPĚTOVÁ OCHRANA: " + revize.getPrepetovaOchrana();
+    }
+
+    private String getJisteni() {
+        return revize.getJisteni();
+    }
+
     private void putRowsToTable(Node putThemBeforeNode, Stridace stridace) {
         // Inserting next stridace
         Node thisTableRow = putThemBeforeNode.getParentNode().getParentNode();
@@ -175,8 +192,44 @@ public class ReportCreater {
         thisTableRow.getParentNode().insertBefore(vyrobniCisloRow, thisTableRow);
     }
 
-    private void putPanelyToTable(Node putThemBeforeNode, Map.Entry<String, List<Panely>> panelyDict) {
+    private void putStridaceRowsToNextTable(Node putThemBeforeNode, Stridace stridace) {
         // Inserting next stridace
+        Node thisTableRow = putThemBeforeNode.getParentNode().getParentNode();
+        Node stridaceRow = putThemBeforeNode.getParentNode().getParentNode().getParentNode().getLastChild().cloneNode(true);
+        Node vyrobniCisloRow = putThemBeforeNode.getParentNode().getParentNode().getParentNode().getLastChild().cloneNode(true);
+
+        stridaceRow.getChildNodes().item(1).getFirstChild().setTextContent("Střídač: " + stridace.getVyrobce() + " " + stridace.getNazev());
+        stridaceRow.getChildNodes().item(5).getFirstChild().setTextContent(stridace.getPocet() + "ks");
+
+        vyrobniCisloRow.getChildNodes().item(1).getFirstChild().setTextContent("vč.: " + stridace.getVyrobniCislo());
+
+        thisTableRow.getParentNode().insertBefore(stridaceRow, thisTableRow);
+        thisTableRow.getParentNode().insertBefore(vyrobniCisloRow, thisTableRow);
+    }
+
+    private void putPanelyRowsToNextTable(Node putThemBeforeNode, Map.Entry<String, List<Panely>> panelyDict) {
+        // Inserting next stridace
+        Node thisTableRow = putThemBeforeNode.getParentNode().getParentNode();
+        Node stridaceRow = putThemBeforeNode.getParentNode().getParentNode().getParentNode().getLastChild().cloneNode(true);
+
+        Short panelyVykon = panelyDict.getValue().get(0).getIdTypyPaneluTypyPanelu().getVykon();
+        String panelyPower = String.valueOf(panelyDict.getValue().size() * panelyVykon);
+        stridaceRow.getChildNodes().item(1).getFirstChild().setTextContent(panelyDict.getValue().size() + " ks" + " " + panelyDict.getKey());
+        stridaceRow.getChildNodes().item(5).getFirstChild().setTextContent(panelyPower + "kWp");
+        stridaceRow.getChildNodes().item(8).getFirstChild().setTextContent("30");
+        stridaceRow.getChildNodes().item(10).getFirstChild().setTextContent("0,4");
+
+        thisTableRow.getParentNode().insertBefore(stridaceRow, thisTableRow);
+    }
+
+    private void setStridaceContentToNode(Node stridaceRow, Node vyrobniCisloRow, Stridace stridace) {
+        // Set content
+        stridaceRow.getFirstChild().getFirstChild().setTextContent("Střídač: " + stridace.getNazev());
+        stridaceRow.getChildNodes().item(1).getFirstChild().setTextContent(stridace.getPocet() + " ks");
+        vyrobniCisloRow.getFirstChild().getFirstChild().setTextContent("v.č.: " + stridace.getVyrobniCislo());
+    }
+
+    private void putPanelyToTable(Node putThemBeforeNode, Map.Entry<String, List<Panely>> panelyDict) {
         Node thisTableRow = putThemBeforeNode.getParentNode().getParentNode();
         Node stridaceRow = putThemBeforeNode.getParentNode().getParentNode().getParentNode().getLastChild().cloneNode(true);
         Node vyrobniCisloRow = putThemBeforeNode.getParentNode().getParentNode().getParentNode().getLastChild().cloneNode(true);
@@ -192,11 +245,14 @@ public class ReportCreater {
         thisTableRow.getParentNode().insertBefore(vyrobniCisloRow, thisTableRow);
     }
 
-    private void setStridaceContentToNode(Node stridaceRow, Node vyrobniCisloRow, Stridace stridace) {
-        // Set content
-        stridaceRow.getFirstChild().getFirstChild().setTextContent("Střídač: " + stridace.getNazev());
-        stridaceRow.getChildNodes().item(1).getFirstChild().setTextContent(stridace.getPocet() + " ks");
-        vyrobniCisloRow.getFirstChild().getFirstChild().setTextContent("v.č.: " + stridace.getVyrobniCislo());
+    private void addFvePanelToTable(Node putThemBeforeNode, Panely panely, Integer i) {
+        Node thisTableRow = putThemBeforeNode.getParentNode().getParentNode();
+        Node newTableRow = putThemBeforeNode.getParentNode().getParentNode().cloneNode(true);
+
+        newTableRow.getFirstChild().getFirstChild().setTextContent(String.valueOf(i));
+        newTableRow.getChildNodes().item(1).getFirstChild().setTextContent(panely.getVyrobniCislo());
+
+        thisTableRow.getParentNode().insertBefore(newTableRow, thisTableRow);
     }
 
     private Map<String, List<Panely>> getPanely() {
@@ -235,22 +291,39 @@ public class ReportCreater {
         popisRevidovanehoObjektu1.setTextContent(getPopisRevidovanehoObjektu1());
         popisRevidovanehoObjektu2.setTextContent(getPopisRevidovanehoObjektu2());
         popisRevidovanehoObjektu3.setTextContent(getPopisRevidovanehoObjektu3());
-        kWCelkem1.setTextContent("x");
 
-        Map<String, List<Panely>> typesPanely = getPanely();
-        for (Map.Entry<String, List<Panely>> value : typesPanely.entrySet()) {
-            putPanelyToTable(stridac, value);
+        // TODO prepetova ochrana musi bejt string a pridat vsude kde jsou ulice collum cislo popisne (i do databaze ) xd
+        prepetovaOchrana.setTextContent(getPrepetovaOchrana());
+        typJisteni.setTextContent(getJisteni());
+
+        for (int i = 0; i < panely.size(); i++) {
+            addFvePanelToTable(fvePanelyPlaceholder, panely.get(i), i+1);
         }
+
+        Integer kwCelkemvalue = 0;
+        Map<String, List<Panely>> typesPanely = getPanely();
+        for (Map.Entry<String, List<Panely>> panel : typesPanely.entrySet()) {
+            kwCelkemvalue += panel.getValue().get(0).getIdTypyPaneluTypyPanelu().getVykon() * panel.getValue().size();
+            putPanelyToTable(stridac, panel);
+            putPanelyRowsToNextTable(typJisteni, panel);
+        }
+
+        kWCelkem1.setTextContent(String.valueOf(kwCelkemvalue));
 
         setStridaceContentToNode(stridac.getParentNode().getParentNode(), stridacVyrobniCislo.getParentNode().getParentNode(), stridace.get(0));
         stridace.remove(0);
         for (Stridace value : stridace) {
             putRowsToTable(nextStridacePlaceholder, value);
+            putStridaceRowsToNextTable(typJisteni, value);
         }
     }
 
-    public void saveReport() throws Exception {
-        doc.save("./src/main/resources/result/result.odt");
+    public void saveReport(String revizeName) throws Exception {
+        File f = new File(resultDirectory + revizeName);
+        if (f.exists()) {
+            Files.delete(Path.of(resultDirectory + revizeName));
+        }
+        doc.save(resultDirectory + revizeName);
     }
 
 }

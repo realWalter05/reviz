@@ -1,18 +1,11 @@
 package cz.intelis.zika.reviz.revize;
 
-import cz.intelis.zika.reviz.objednatele.Objednatele;
 import cz.intelis.zika.reviz.panely.Panely;
-import cz.intelis.zika.reviz.revidovane_objekty.RevidovaneObjekty;
 import cz.intelis.zika.reviz.stridace.Stridace;
-import cz.intelis.zika.reviz.typy_panelu.TypyPanelu;
-import org.apache.jena.base.Sys;
 import org.odftoolkit.odfdom.doc.OdfDocument;
-import org.odftoolkit.odfdom.pkg.OdfElement;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,8 +16,13 @@ import java.util.Optional;
 public class RevizeService {
     private final RevizeRepository revizeRepository;
 
-    public RevizeService(RevizeRepository revizeRepository) {
+    private final String templateDirectory;
+    private final String resultDirectory;
+
+    public RevizeService(RevizeRepository revizeRepository, @Value("${revize.template.directory}") String templateDirectory, @Value("${revize.result.directory}") String resultDirectory) {
         this.revizeRepository = revizeRepository;
+        this.templateDirectory = templateDirectory;
+        this.resultDirectory = resultDirectory;
     }
 
     public List<Revize> findAll() {
@@ -58,10 +56,11 @@ public class RevizeService {
     }
 
     public void createReport(Revize revize, List<Panely> panely, List<Stridace> stridace) throws Exception {
-        OdfDocument doc = OdfDocument.loadDocument("./src/main/resources/templates/revize.odt");
-        ReportCreater reportCreater = new ReportCreater(doc, revize, panely, stridace);
+        OdfDocument doc = OdfDocument.loadDocument(templateDirectory);
+
+        ReportCreater reportCreater = new ReportCreater(doc, resultDirectory, revize, panely, stridace);
         reportCreater.createReport();
-        reportCreater.saveReport();
+        reportCreater.saveReport(getRevizeFileName(revize));
     }
 
     public void delete(Long id) {
@@ -70,5 +69,9 @@ public class RevizeService {
 
     public List<Revize> getRevizeByDatumPredaniRevizeBetween(LocalDate datumPredaniRevizeOd, LocalDate datumPredaniRevizeDo) {
         return revizeRepository.getRevizeByDatumPredaniRevizeBetween(datumPredaniRevizeOd, datumPredaniRevizeDo);
+    }
+
+    public String getRevizeFileName(Revize revize) {
+        return "revize_" + revize.getObjednateleIdObjednatele().getNazev().replace(" ", "_") + "_" + revize.getId() + ".odt";
     }
 }

@@ -2,7 +2,7 @@ package cz.intelis.zika.reviz.revize;
 
 import cz.intelis.zika.reviz.panely.PanelyService;
 import cz.intelis.zika.reviz.stridace.StridaceService;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,20 +11,25 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @Controller
-@AllArgsConstructor
 @RequestMapping("/revize")
 public class RevizeApi {
     private final RevizeService revizeService;
     private final PanelyService panelyService;
     private final StridaceService stridaceService;
+    private final String resultDirectory;
+
+    public RevizeApi(RevizeService revizeService, PanelyService panelyService, StridaceService stridaceService, @Value("${revize.result.directory}") String resultDirectory) {
+        this.revizeService = revizeService;
+        this.panelyService = panelyService;
+        this.stridaceService = stridaceService;
+        this.resultDirectory = resultDirectory;
+    }
 
     @GetMapping
     public List<Revize> findAll() {
@@ -40,20 +45,28 @@ public class RevizeApi {
     }
 
     @GetMapping({"create_report"})
-    public ResponseEntity<byte[]> createReport(@RequestParam Long id) throws Exception {
+    public ResponseEntity<Revize> createReport(@RequestParam Long id) throws Exception {
         Optional<Revize> revize = revizeService.findById(id);
         Revize revizeInstance = revize.get();
         revizeService.createReport(revizeInstance, panelyService.getPaneliesByIdRevizeRevize(revizeInstance), stridaceService.getStridacesByIdRevizeRevize(revizeInstance));
 
-        byte[] contents = this.getClass().getClassLoader().getResourceAsStream("result/result.odt").readAllBytes();
+        return new ResponseEntity<>(revizeInstance, HttpStatus.OK);
+    }
+
+    @GetMapping({"download_report"})
+    public ResponseEntity<byte[]> downloadReport(@RequestParam Long id) throws Exception {
+        Optional<Revize> revize = revizeService.findById(id);
+        Revize revizeInstance = revize.get();
+
+        String revizeName = revizeService.getRevizeFileName(revizeInstance);
+        byte[] contents = this.getClass().getClassLoader().getResourceAsStream("result/" + revizeService.getRevizeFileName(revizeInstance)).readAllBytes();
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_XML);
-        String filename = "output.odt";
-        headers.setContentDispositionFormData(filename, filename);
+        headers.setContentDispositionFormData(revizeName, revizeName);
         headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-        ResponseEntity<byte[]> response = new ResponseEntity<>(contents, headers, HttpStatus.OK);
-        Files.delete(Path.of("C:/Users/vacla/IdeaProjects/reviz/src/main/resources/result/result.odt"));
-        return response;
+        return new ResponseEntity<>(contents, headers, HttpStatus.OK);
+
     }
 
     @DeleteMapping({"/{id}"})
